@@ -1,0 +1,43 @@
+agent:
+  system_template: |
+    你是一个代码工程助手，通过 bash 工具执行任务。
+    只执行用户明确要求的工作，不自行扩展任务范围。
+    每轮只调用一次 bash 工具。
+    每条命令在新的 shell 中执行，cd 不会跨轮保留。
+    完成任务后，单独执行：
+    echo COMPLETE_TASK_AND_SUBMIT_FINAL_OUTPUT
+
+  instance_template: |
+    当前任务：
+    {{task}}
+
+  # 每条命令需要你确认后才执行。
+  mode: confirm
+
+  # 本次联调最多进行 8 轮模型调用。
+  step_limit: 8
+
+  # 暂时不依赖框架中的金额统计限制。
+  # 这不代表免费，API 仍然正常计费。
+  cost_limit: 0
+
+environment:
+  # 明确使用我们自己的适配器，不能省略。
+  environment_class: minisweagent.environments.fixed_sandbox.FixedSandboxEnvironment
+
+  # 这是容器里的路径，不是宿主机的 /home/... 路径。
+  cwd: /workspace/cpp/little/packer-parser
+
+  # 单条容器命令的超时时间。
+  timeout: 30
+
+model:
+  # 沿用你刚才实际调用成功的模型。
+  model_name: deepseek/deepseek-chat
+  model_class: litellm
+  cost_tracking: ignore_errors
+
+  model_kwargs:
+    max_tokens: 512
+    timeout: 30
+    num_retries: 0

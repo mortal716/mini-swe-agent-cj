@@ -1,0 +1,3 @@
+# Only this root-owned executable, with NO command-line arguments.
+# JSON input is validated inside the program.
+wangcj ALL=(root) NOPASSWD: NOSETENV: /usr/local/libexec/wangcj-agent-exec ""
